@@ -1,0 +1,250 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firestore Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+    <!-- Left Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    <path d="M9 12l2 2 4-4"></path>
+                </svg>
+                <span>Admin Panel</span>
+            </div>
+            <button class="sidebar-close" id="sidebar-close" aria-label="Close Menu">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <h4>Main Menu</h4>
+                <a href="#" class="nav-item active" data-tab="requests">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="14" width="7" height="7"></rect>
+                        <rect x="3" y="14" width="7" height="7"></rect>
+                    </svg>
+                    <span>Payment Requests</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="withdrawals">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="1" x2="12" y2="23"></line>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                    </svg>
+                    <span>Withdrawals</span>
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <h4>Analytics</h4>
+                <a href="#" class="nav-item" id="nav-analytics">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="20" x2="18" y2="10"></line>
+                        <line x1="12" y1="20" x2="12" y2="4"></line>
+                        <line x1="6" y1="20" x2="6" y2="14"></line>
+                    </svg>
+                    <span>Charts & Stats</span>
+                    <span class="toggle-indicator" id="analytics-indicator">ON</span>
+                </a>
+            </div>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <button id="sidebar-logout" class="sidebar-logout-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                <span>Logout</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content Wrapper -->
+    <div class="main-wrapper">
+        <header class="app-header">
+        <div class="header-left">
+            <button class="hamburger-menu" id="hamburger-menu" aria-label="Toggle Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <h1>Admin Dashboard</h1>
+        </div>
+        <div class="header-right">
+            <button id="logout-button" class="logout-button" title="Logout" aria-label="Logout">Logout</button>
+        </div>
+    </header>
+
+    <!-- Statistics Boxes -->
+    <div class="stats-container">
+        <div class="stat-card stat-total">
+            <div class="stat-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 3h18v18H3z"></path>
+                    <path d="M8 7h8M8 12h8M8 17h8"></path>
+                </svg>
+            </div>
+            <div class="stat-content">
+                <h3 id="total-count">0</h3>
+                <p>Total Requests</p>
+            </div>
+        </div>
+        <div class="stat-card stat-pending">
+            <div class="stat-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+            </div>
+            <div class="stat-content">
+                <h3 id="pending-count">0</h3>
+                <p>Pending</p>
+            </div>
+        </div>
+        <div class="stat-card stat-paid">
+            <div class="stat-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+            </div>
+            <div class="stat-content">
+                <h3 id="paid-count">0</h3>
+                <p>Paid</p>
+            </div>
+        </div>
+        <div class="stat-card stat-rejected">
+            <div class="stat-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="15" y1="9" x2="9" y2="15"></line>
+                    <line x1="9" y1="9" x2="15" y2="15"></line>
+                </svg>
+            </div>
+            <div class="stat-content">
+                <h3 id="rejected-count">0</h3>
+                <p>Rejected</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Section with Toggle -->
+    <div class="charts-section">
+        <div class="charts-toggle">
+            <h2>Analytics Dashboard</h2>
+            <label class="toggle-switch">
+                <input type="checkbox" id="charts-toggle" checked>
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+        <div class="charts-container" id="charts-container">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3>Status Overview</h3>
+                    <p>Distribution of request statuses</p>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="statusChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3>Trends Analysis</h3>
+                    <p>Request status breakdown</p>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="trendsChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="filter-controls">
+        <label for="status-filter">Filter by status:</label>
+        <select id="status-filter">
+            <option value="all">All</option>
+            <option value="pending">Pending</option>
+            <option value="paid">Paid</option>
+            <!-- NEW: Filter option for rejected items -->
+            <option value="proof_rejected">Rejected</option>
+        </select>
+    </div>
+
+    <main class="container">
+        <!-- Requests Tab -->
+        <div id="requests-tab" class="tab-content active">
+            <p id="status-message">Loading documents...</p>
+            <div id="docs-container"></div>
+        </div>
+
+        <!-- Withdrawals Tab -->
+        <div id="withdrawals-tab" class="tab-content">
+            <p id="withdrawals-message">Loading withdrawals...</p>
+            <div id="withdrawals-container"></div>
+        </div>
+    </main>
+
+    <div id="image-modal" class="modal">
+        <span class="modal-close">&times;</span>
+        <img class="modal-content" id="modal-image">
+    </div>
+
+    <!-- Login Gate -->
+    <div id="login-overlay" class="login-overlay" aria-hidden="true">
+        <div class="login-card">
+            <div class="login-image-section">
+                <img src="https://kolors-virtual-try-on.com/images/android-chrome-512x512.png" alt="Virtual Try-On Fashion">
+                <div class="login-image-text">
+                    <h3>Virtue TRY</h3>
+
+                </div>
+            </div>
+            <div class="login-form-section">
+                <div class="login-header">
+                    <div class="login-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            <path d="M9 12l2 2 4-4"></path>
+                        </svg>
+                    </div>
+                    <h2>Admin Login</h2>
+                    <p>Enter your credentials to continue</p>
+                </div>
+                <div class="login-body">
+                    <label for="login-username">Username</label>
+                    <input type="text" id="login-username" placeholder="Enter username" autocomplete="username" />
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" placeholder="Enter password" autocomplete="current-password" />
+                    <button id="login-submit" class="login-button">Sign In</button>
+                    <p id="login-error" class="login-error" role="alert"></p>
+                </div>
+                <div class="login-footer">
+                    <small>Secure admin access for dashboard management</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </div><!-- Close main-wrapper -->
+
+    <script type="module" src="firebase.js"></script>
+    <script type="module" src="script.js"></script>
+
+</body>
+</html>
