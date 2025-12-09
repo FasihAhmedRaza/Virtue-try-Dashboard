@@ -378,10 +378,25 @@ async function handleStatusUpdate(docId, newStatus, cardElement) {
 async function fetchAndStoreDocs() {
     try {
         const querySnapshot = await getDocs(collection(firestore, collectionName));
-        allFetchedDocs = querySnapshot.docs.map(doc => ({
-            id: doc.id,
-            data: doc.data()
-        }));
+        allFetchedDocs = querySnapshot.docs
+            .map(doc => ({
+                id: doc.id,
+                data: doc.data()
+            }))
+            // Filter out requests without payment proof and COD payments
+            .filter(doc => {
+                const data = doc.data;
+                // Exclude if no payment proof URL exists
+                if (!data.paymentProofUrl || data.paymentProofUrl.trim() === '') {
+                    return false;
+                }
+                // Exclude if payment method is Cash on Delivery (COD)
+                const paymentMethod = (data.paymentMethod || '').toLowerCase();
+                if (paymentMethod === 'cod' || paymentMethod === 'cash on delivery' || paymentMethod === 'cashondelivery') {
+                    return false;
+                }
+                return true;
+            });
         
         allFetchedDocs.sort((a, b) => {
             const timeA = a.data.payment_submitted_at?.seconds || 0;
