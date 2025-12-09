@@ -341,7 +341,13 @@ async function handleStatusUpdate(docId, newStatus, cardElement) {
 
     const docRef = doc(firestore, collectionName, docId);
     try {
-        await updateDoc(docRef, { payment_status: newStatus });
+        // If approving payment, also set order_status to 'started'
+        const updateData = { payment_status: newStatus };
+        if (newStatus === 'paid') {
+            updateData.order_status = 'started';
+        }
+        
+        await updateDoc(docRef, updateData);
 
         // --- Animate the UI Change ---
         const statusBadge = cardElement.querySelector('.status-badge');
@@ -353,6 +359,9 @@ async function handleStatusUpdate(docId, newStatus, cardElement) {
         const docToUpdate = allFetchedDocs.find(doc => doc.id === docId);
         if (docToUpdate) {
             docToUpdate.data.payment_status = newStatus;
+            if (newStatus === 'paid') {
+                docToUpdate.data.order_status = 'started';
+            }
         }
 
     } catch (error) {
